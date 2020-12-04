@@ -12,13 +12,19 @@ namespace DMRNG
 
         Dictionary<string, Dictionary<string, double>> _table;
 
-        public RandomNameGenerator(string source, int minSize=100, int maxLength=20)
+        /**
+         * The default maxLength and minSize parameters are experimentally
+         * reasonable based on the included sample source data. Your own
+         * source data, and name length requirements, may well require
+         * different values.
+         */
+        public RandomNameGenerator(string source, int maxLength=20, int minSize=100)
         {
             _rnd = new System.Random();
             Init(source, minSize, maxLength);
         }
 
-        public RandomNameGenerator(int seed, string source, int minSize=100, int maxLength=20)
+        public RandomNameGenerator(int seed, string source, int maxLength=20, int minSize=100)
         {
             _rnd = new System.Random(seed);
             Init(source, minSize, maxLength);
@@ -31,6 +37,22 @@ namespace DMRNG
             SetupTable(source);
         }
 
+        /**
+         * Build the data structure used by the generator from a whitespace-separated
+         * input list of sample names.
+         * This table maps a trigram to a dictionary of next letter mapped to probability
+         * of that letter being the next character after the trigram. The probability is
+         * held as a cumulutive value in no particular order, so one of these inner
+         * dictionaries could be visualised as something like:
+         *      ------------------------------------------------------
+         *      |    A     |          B         |         C          |
+         *      +----------+--------------------+--------------------+
+         *      |   0.2    |        0.6         |        1.0         |
+         *      ------------------------------------------------------
+         * To provide an entry point, it also maps "" (three spaces) to one of these
+         * inner tables where the keys are not single letters but the initial trigrams of
+         * the names in the source data.
+         */
         void SetupTable(string source)
         {
             _table = new Dictionary<string, Dictionary<string, double>>();
@@ -77,6 +99,20 @@ namespace DMRNG
             }
         }
 
+        /**
+         * Given a list of Ts -- written as generic, in practice an inner table as
+         * described above -- and a function to map the T to a cumulative probability,
+         * choose a random element weighted by the given probabilities.
+         * Given an inner table looking like
+         *      ------------------------------------------------------
+         *      |    A     |          B         |         C          |
+         *      +----------+--------------------+--------------------+
+         *      |   0.2    |        0.6         |        1.0         |
+         *      ------------------------------------------------------
+         *                    ^dice
+         * we can see how a dice value uniformly distributed between 0 and 1 is turned
+         * into a non-uniform selection from the list.
+         */
         T Choose<T>(IEnumerable<T> possibilities, Func<T, double> value, T fallback)
         {
             double dice = _rnd.NextDouble();
@@ -88,6 +124,16 @@ namespace DMRNG
             return fallback;
         }
 
+        /**
+         * Call Next() to generate a random name.
+         * maxNameLength exists because, experimentally, some source data sets can
+         * produce ridiculously long names, and potentially get into infinite loops.
+         * So if the name being generated goes over this limit, it is abandonned and
+         * the generation process restarted. This could, of course, lead to another
+         * inifinte loop. The reason for doing this and not just simply breaking out
+         * is to ensure that the generated names always have endings which exist in
+         * the source data set.
+         */
         public string Next(int maxNameLength=0)
         {
             if (maxNameLength == 0)
