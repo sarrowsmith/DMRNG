@@ -42,16 +42,22 @@ namespace DMRNG
             }
 
             if (showHelp) {
-                ShowHelp ("drmng", p);
+                ShowHelp (p);
                 return;
             }
 
+            StreamReader reader;
             if ((source == "" || source == "-") && Console.IsInputRedirected) {
-                using (StreamReader reader = new StreamReader(Console.OpenStandardInput(), Console.InputEncoding)) {
-                    source = reader.ReadToEnd();
-                }
+                reader = new StreamReader(Console.OpenStandardInput(), Console.InputEncoding);            }
+            else {
+                reader = new StreamReader(source);
+            }
+            using (reader) {
+                source = reader.ReadToEnd();
             }
 
+            if (seed != null)
+                Console.WriteLine(seed.GetHashCode());
             RandomNameGenerator rng = seed == null ?
                 new RandomNameGenerator(source, 0, maxLength) :
                 new RandomNameGenerator(seed.GetHashCode(), source, 0, maxLength);
@@ -61,9 +67,10 @@ namespace DMRNG
             }
         }
 
-        static void ShowHelp (string arg0, OptionSet p)
+        static void ShowHelp (OptionSet p)
         {
-            Console.WriteLine($"Usage: {arg0} [OPTIONS]+ [NUMBER] [SOURCE]");
+            string myName = Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location);
+            Console.WriteLine($"Usage: {myName} [OPTIONS]+ [NUMBER] [SOURCE]");
             Console.WriteLine("Generate NUMBER names (default 1) sourced from SOURCE (default stdin)");
             Console.WriteLine("Options:");
             p.WriteOptionDescriptions(Console.Out);
