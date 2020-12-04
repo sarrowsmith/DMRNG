@@ -36,7 +36,7 @@ namespace DMRNG
             _table = new Dictionary<string, Dictionary<string, double>>();
             string[] names;
             names = source.Split(null as char[]).Where( x => x != "" ).ToArray();
-            if (names.Length < 100) {
+            if (_minSourceSize > 0 && names.Length < _minSourceSize) {
                 foreach (string name in names) {
                     _table["   "][name] = 1;
                 }
@@ -65,11 +65,11 @@ namespace DMRNG
 
                 }
             }
-            foreach (Dictionary<string, double> possibilities in _table.Values.ToList()) {
+            foreach (Dictionary<string, double> possibilities in _table.Values) {
                 if (possibilities.Count > 1) {
                     double total = possibilities.Values.Sum();
                     double cumul = 0;
-                    foreach (string possibility in possibilities.Keys.ToList()) {
+                    foreach (string possibility in possibilities.Keys) {
                         cumul += possibilities[possibility]/total;
                         possibilities[possibility] = cumul;
                     }
@@ -88,7 +88,7 @@ namespace DMRNG
             return fallback;
         }
 
-        public string GetRandomName(int maxNameLength=0)
+        public string Next(int maxNameLength=0)
         {
             if (maxNameLength == 0)
                 maxNameLength = _maxNameLength;

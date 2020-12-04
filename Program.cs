@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using System.Collections.Generic;
+using Mono.Options;
 
 namespace DMRNG
 {
@@ -6,7 +9,65 @@ namespace DMRNG
     {
         static void Main(string[] args)
         {
-            RandomNameGenerator rng = new RandomNameGenerator();
+            int number = 1;
+            string source = "";
+            int maxLength = 20;
+            string seed = null;
+            bool showHelp = false;
+
+            var p = new OptionSet () {
+                { "n|number=", "the {NUMBER} of names to generate.",
+                (int v) => number = v },
+                { "s|seed=", "use {SEED} to seed the randomness.",
+                v => seed = v },
+                { "m|max-length=", "the {MAXIMUM_LENGTH} of name to generate.",
+                (int v) => maxLength = v },
+                { "h|help",  "show this message and exit",
+                v => showHelp = v != null },
+            };
+
+            try {
+                List<string> extra;
+                extra = p.Parse (args);
+                if (extra.Count > 0) {
+                    source = extra[extra.Count - 1];
+                    if (extra.Count > 1) {
+                        number = Int32.Parse(extra[0]);
+                    }
+                }
+            }
+            catch (OptionException e) {
+                Console.WriteLine(e.Message);
+                showHelp = true;
+            }
+
+            if (showHelp) {
+                ShowHelp ("drmng", p);
+                return;
+            }
+
+            if ((source == "" || source == "-") && Console.IsInputRedirected) {
+                using (StreamReader reader = new StreamReader(Console.OpenStandardInput(), Console.InputEncoding)) {
+                    source = reader.ReadToEnd();
+                }
+            }
+
+            RandomNameGenerator rng = seed == null ?
+                new RandomNameGenerator(source, 0, maxLength) :
+                new RandomNameGenerator(seed.GetHashCode(), source, 0, maxLength);
+
+            for (; number > 0; --number) {
+                Console.WriteLine(rng.Next());
+            }
         }
+
+        static void ShowHelp (string arg0, OptionSet p)
+        {
+            Console.WriteLine($"Usage: {arg0} [OPTIONS]+ [NUMBER] [SOURCE]");
+            Console.WriteLine("Generate NUMBER names (default 1) sourced from SOURCE (default stdin)");
+            Console.WriteLine("Options:");
+            p.WriteOptionDescriptions(Console.Out);
+        }
+
     }
 }
