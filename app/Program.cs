@@ -30,9 +30,6 @@ class Program
             extra = p.Parse (args);
             if (extra.Count > 0) {
                 source = extra[extra.Count - 1];
-                if (extra.Count > 1) {
-                    number = Int32.Parse(extra[0]);
-                }
             }
         }
         catch (OptionException e) {
@@ -68,8 +65,9 @@ class Program
     static void ShowHelp (OptionSet p)
     {
         string myName = Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location);
-        Console.WriteLine($"Usage: {myName} [OPTIONS]+ [NUMBER] [SOURCE]");
-        Console.WriteLine("Generate NUMBER names (default 1) sourced from SOURCE (default stdin)");
+        Console.WriteLine($"Usage: {myName} [OPTIONS]+ <SOURCE|->");
+        Console.WriteLine("Generate NUMBER names (default 1) sourced from SOURCE.");
+        Console.WriteLine("Give SOURCE as - to use stdin.");
         Console.WriteLine("Options:");
         p.WriteOptionDescriptions(Console.Out);
     }
