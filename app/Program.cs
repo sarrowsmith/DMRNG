@@ -64,7 +64,7 @@ class Program
 
     static void ShowHelp (OptionSet p)
     {
-        string myName = Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location);
+        string myName = Utils.GetName();
         Console.WriteLine($"Usage: {myName} [OPTIONS]+ <SOURCE|->");
         Console.WriteLine("Generate NUMBER names (default 1) sourced from SOURCE.");
         Console.WriteLine("Give SOURCE as - to use stdin.");

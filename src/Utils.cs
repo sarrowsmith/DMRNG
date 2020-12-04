@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using System.Text;
 
 namespace DMRNG
@@ -26,6 +28,11 @@ namespace DMRNG
             hash ^= hash >> 11;
             hash += hash << 15;
             return (int)hash;
+        }
+
+        public static string GetName()
+        {
+            return Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]);
         }
     }
 }
