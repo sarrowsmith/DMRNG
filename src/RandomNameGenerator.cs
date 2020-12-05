@@ -58,7 +58,7 @@ namespace DMRNG
             _table = new Dictionary<string, Dictionary<string, double>>();
             string[] names;
             string trigram = "   ";
-            names = source.Split(null as char[]).Where( x => x != "" ).ToArray();
+            names = source.Split(null as char[]).Where( x => x != "" ).Select( x => x.ToLower() ).ToArray();
             if (_minSourceSize > 0 && names.Length < _minSourceSize) {
                 foreach (string name in names) {
                     if (!_table.ContainsKey(trigram)) {
@@ -157,7 +157,7 @@ namespace DMRNG
                     trigram = name.Substring(name.Length - 3, 3);
                 }
             }
-            return name[0]+name.Substring(1).ToLower();
+            return Char.ToUpper(name[0])+name.Substring(1);
         }
     }
 }
