@@ -57,17 +57,21 @@ namespace DMRNG
         {
             _table = new Dictionary<string, Dictionary<string, double>>();
             string[] names;
+            string trigram = "   ";
             names = source.Split(null as char[]).Where( x => x != "" ).ToArray();
             if (_minSourceSize > 0 && names.Length < _minSourceSize) {
                 foreach (string name in names) {
-                    _table["   "][name] = 1;
+                    if (!_table.ContainsKey(trigram)) {
+                       _table.Add(trigram, new Dictionary<string, double>());
+                    }
+                    _table[trigram][name] = 1;
                 }
             }
             else {
                 foreach (string name in names) {
                     int pos = 0;
-                    string trigram = "   ";
                     string next = name.Substring(0, 3);
+                    trigram = "   ";
                     while(true) {
                         if (!_table.ContainsKey(trigram)) {
                             _table.Add(trigram, new Dictionary<string, double>());
@@ -84,14 +88,15 @@ namespace DMRNG
                         next = name.Substring(pos+3, 1);
                         pos++;
                     }
-
                 }
             }
+
             foreach (Dictionary<string, double> possibilities in _table.Values) {
                 if (possibilities.Count > 1) {
                     double total = possibilities.Values.Sum();
                     double cumul = 0;
-                    foreach (string possibility in possibilities.Keys) {
+                    /* Take a copy of the keys because we're changing the inner table in place */
+                    foreach (string possibility in possibilities.Keys.ToList()) {
                         cumul += possibilities[possibility]/total;
                         possibilities[possibility] = cumul;
                     }
