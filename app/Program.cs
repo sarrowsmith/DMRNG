@@ -1,4 +1,8 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+#else
+#if UNITY_STANDALONE
+#else
+using System;
 using System.IO;
 using System.Collections.Generic;
 using Mono.Options;
@@ -73,3 +77,5 @@ class Program
     }
 
 }
+#endif
+#endif
