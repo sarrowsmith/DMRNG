@@ -11,7 +11,11 @@
 /[Mm]emoryCaptures/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
-!/[Aa]ssets/**/*.meta
+#!/[Aa]ssets/**/*.meta
+# ... except if we're imported as a submodule, out .gitignore takes precedence and
+# forces in our meta files. Which, as we're not really a Unity project, is inapporpriate.
+/*.meta
+/**/*.meta
 
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # /[Aa]ssets/AssetStoreTools*
