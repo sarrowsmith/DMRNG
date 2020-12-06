@@ -18,7 +18,8 @@ class Program
         string seed = null;
         bool showHelp = false;
 
-        var p = new OptionSet () {
+        var p = new OptionSet ()
+        {
             { "n|number=", "the {NUMBER} of names to generate.",
             (int v) => number = v },
             { "s|seed=", "use {SEED} to seed the randomness.",
@@ -29,28 +30,34 @@ class Program
             v => showHelp = v != null },
         };
 
-        try {
+        try
+        {
             List<string> extra;
             extra = p.Parse (args);
-            if (extra.Count > 0) {
+            if (extra.Count > 0)
+            {
                 source = extra[extra.Count - 1];
             }
         }
-        catch (OptionException e) {
+        catch (OptionException e)
+        {
             Console.WriteLine(e.Message);
             showHelp = true;
         }
 
-        if (showHelp) {
+        if (showHelp)
+        {
             ShowHelp (p);
             return;
         }
 
         StreamReader reader;
-        if ((source == "" || source == "-") && Console.IsInputRedirected) {
+        if ((source == "" || source == "-") && Console.IsInputRedirected)
+        {
             reader = new StreamReader(Console.OpenStandardInput(), Console.InputEncoding);
         }
-        else {
+        else
+        {
             reader = new StreamReader(source);
         }
         using (reader) {
@@ -61,7 +68,8 @@ class Program
             new RandomNameGenerator(source, maxLength) :
             new RandomNameGenerator(Utils.Hash(seed), source, maxLength);
 
-        for (; number > 0; --number) {
+        for (; number > 0; --number)
+        {
             Console.WriteLine(rng.Next());
         }
     }

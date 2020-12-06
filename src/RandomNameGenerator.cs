@@ -59,31 +59,42 @@ namespace DMRNG
             string[] names;
             string trigram = "   ";
             names = source.Split(null as char[]).Where( x => x != "" ).Select( x => x.ToLower() ).ToArray();
-            if (_minSourceSize > 0 && names.Length < _minSourceSize) {
-                foreach (string name in names) {
-                    if (!_table.ContainsKey(trigram)) {
+            if (_minSourceSize > 0 && names.Length < _minSourceSize)
+            {
+                foreach (string name in names)
+                {
+                    if (!_table.ContainsKey(trigram))
+                    {
                        _table.Add(trigram, new Dictionary<string, double>());
                     }
                     _table[trigram][name] = 1;
                 }
             }
-            else {
-                foreach (string name in names) {
+            else
+            {
+                foreach (string name in names)
+                {
                     int pos = 0;
                     string next = name.Substring(0, 3);
                     trigram = "   ";
-                    while(true) {
-                        if (!_table.ContainsKey(trigram)) {
+                    while(true)
+                    {
+                        if (!_table.ContainsKey(trigram))
+                        {
                             _table.Add(trigram, new Dictionary<string, double>());
                         }
-                        if (_table[trigram].ContainsKey(next)) {
+                        if (_table[trigram].ContainsKey(next))
+                        {
                             _table[trigram][next]++;
                         }
-                        else {
+                        else
+                        {
                             _table[trigram][next] = 1;
                         }
                         if (pos + 4 > name.Length)
+                        {
                             break;
+                        }
                         trigram = name.Substring(pos, 3);
                         next = name.Substring(pos+3, 1);
                         pos++;
@@ -91,12 +102,15 @@ namespace DMRNG
                 }
             }
 
-            foreach (Dictionary<string, double> possibilities in _table.Values) {
-                if (possibilities.Count > 1) {
+            foreach (Dictionary<string, double> possibilities in _table.Values)
+            {
+                if (possibilities.Count > 1)
+                {
                     double total = possibilities.Values.Sum();
                     double cumul = 0;
                     /* Take a copy of the keys because we're changing the inner table in place */
-                    foreach (string possibility in possibilities.Keys.ToList()) {
+                    foreach (string possibility in possibilities.Keys.ToList())
+                    {
                         cumul += possibilities[possibility]/total;
                         possibilities[possibility] = cumul;
                     }
@@ -121,8 +135,10 @@ namespace DMRNG
         T Choose<T>(IEnumerable<T> possibilities, Func<T, double> value, T fallback)
         {
             double dice = _rnd.NextDouble();
-            foreach (T possibility in possibilities) {
-                if (value(possibility) > dice) {
+            foreach (T possibility in possibilities)
+            {
+                if (value(possibility) > dice)
+                {
                     return possibility;
                 }
             }
@@ -142,17 +158,22 @@ namespace DMRNG
         public string Next(int maxNameLength=0)
         {
             if (maxNameLength == 0)
+            {
                 maxNameLength = _maxNameLength;
+            }
             Dictionary<string, double> possibilities;
             string trigram = "   ";
             string name = "";
-            while (_table.TryGetValue(trigram, out possibilities)) {
+            while (_table.TryGetValue(trigram, out possibilities))
+            {
                 string next = Choose(possibilities, kvp => kvp.Value, new KeyValuePair<string, double>()).Key;
-                if (name.Length > maxNameLength || next == "") {
+                if (name.Length > maxNameLength || next == "")
+                {
                     name = "";
                     trigram = "   ";
                 }
-                else {
+                else
+                {
                     name += next;
                     trigram = name.Substring(name.Length - 3, 3);
                 }

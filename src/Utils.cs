@@ -19,7 +19,8 @@ namespace DMRNG
             byte[] key = Encoding.Unicode.GetBytes(s);
             int length = key.Length;
             uint hash = 0;
-            while (i != length) {
+            while (i != length)
+            {
                 hash += key[i++];
                 hash += hash << 10;
                 hash ^= hash >> 6;
