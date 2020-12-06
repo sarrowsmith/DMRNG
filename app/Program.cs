@@ -1,6 +1,4 @@
-﻿#if UNITY_EDITOR
-#else
-#if UNITY_STANDALONE
+﻿#if GODOT || UNITY_EDITOR || UNITY_STANDALONE
 #else
 using System;
 using System.IO;
@@ -85,5 +83,4 @@ class Program
     }
 
 }
-#endif
 #endif
