@@ -18,13 +18,13 @@ namespace DMRNG
          * source data, and name length requirements, may well require
          * different values.
          */
-        public RandomNameGenerator(string source, int maxLength=20, int minSize=100)
+        public RandomNameGenerator(string source, int maxLength=20, int minSize=0)
         {
             _rnd = new System.Random();
             Init(source, minSize, maxLength);
         }
 
-        public RandomNameGenerator(int seed, string source, int maxLength=20, int minSize=100)
+        public RandomNameGenerator(int seed, string source, int maxLength=20, int minSize=0)
         {
             _rnd = new System.Random(seed);
             Init(source, minSize, maxLength);
