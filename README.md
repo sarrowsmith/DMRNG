@@ -18,5 +18,3 @@ It will also build a command line application, but that might not work out-of-th
 It is quite likely that the algorithm will return names which are in the source list. The shorter the list, the more likely this is, and the `minSize` parameter is effectively a way of saying "I know this is going to happen for sources under a certain length, so don't even try to generate new names for those."
 
 Processing is done in C# Unicode strings, which means it *should* work for any alphabetic script. Because the algorithm operates on trigrams, accented characters may be presented as single code points (as in the example data sets) or as combining diacritics. Similarly, I would expect a data source written in an abugida to work reasonably well. I would *not* expect abjads to produce good results, and suspect syllaberies would require very large data source to before generating anything interesting.
-
-If you are using Godot, be aware that C# has full Unicode support by GDScript is limitted to ... (investigate)
