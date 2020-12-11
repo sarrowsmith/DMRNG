@@ -13,10 +13,12 @@ namespace DMRNG
         Dictionary<string, Dictionary<string, double>> _table;
 
         /**
-         * The default maxLength and minSize parameters are experimentally
-         * reasonable based on the included sample source data. Your own
-         * source data, and name length requirements, may well require
-         * different values.
+         * The default maxLength parameter is experimentally reasonable based on
+         * the included sample source data. Your own source data, and name length
+         * requirements, may well require a different value.
+         * minSize should usually be ignored. It's a relic of the original
+         * DragonMail implementation for skipping random generation on small data
+         * sources which are unlikely to generate original names.
          */
         public RandomNameGenerator(string source, int maxLength=20, int minSize=0)
         {
@@ -167,7 +169,7 @@ namespace DMRNG
             while (_table.TryGetValue(trigram, out possibilities))
             {
                 string next = Choose(possibilities, kvp => kvp.Value, new KeyValuePair<string, double>()).Key;
-                if (name.Length > maxNameLength || next == "")
+                if ((name.Length > maxNameLength && maxNameLength > 0) || next == "")
                 {
                     name = "";
                     trigram = "   ";
